@@ -105,3 +105,51 @@ rounded.barplot(candies, xlab="Candy Flavour")
 flavours_2 <- c("Mango","Papaya","Banana")
 candies_2 <- sample(flavours_2, size=50, prob=(1:length(flavours_2))/sum(1:length(flavours_2)), replace=TRUE)
 rounded.barplot(candies_2, xlab="Flavours")
+
+# Question 4 
+
+setwd("C:/Users/2baja/OneDrive/Desktop/STAT 341/A1")
+apartment_eval <- read.csv("Apartment_Building_Evaluation.csv")
+
+# q4 a) 
+score_90 <- apartment_eval[,"SCORE"] >= 90
+sum_score_90 <- sum(score_90)
+
+# q4 b)
+davenport <- which(apartment_eval[,"WARDNAME"] == "Davenport")
+davenport_apartments <- apartment_eval[davenport,]
+davenport_apartments_sorted_addresses <- davenport_apartments[order(-davenport_apartments$SCORE),"SITE_ADDRESS"]
+top_5_addresses <- davenport_apartments_sorted_addresses[c(1:5)]
+
+# q4 c)
+
+unique_wardnames <- unique(apartment_eval[,"WARDNAME"])
+sapply(unique_wardnames, function(name) { mean(apartment_eval[which(apartment_eval$WARDNAME == name), "SCORE"]) })
+
+# q4 d)
+
+plot(apartment_eval$YEAR_BUILT, apartment_eval$SCORE, pch = 1, col=adjustcolor("black", alpha = 0.8), xlab="Year built", ylab="Apartment Score")
+
+unique_years <- unique(apartment_eval[,"YEAR_BUILT"])
+average_score_by_year <- sapply(unique_years, function(year_built) { mean(apartment_eval[which(apartment_eval$YEAR_BUILT == year_built), "SCORE"]) })
+
+lines(unique_years, average_score_by_year, pch = 18, col="red", type="b")
+
+legend(x = "bottomleft",          # Position
+       legend = c("building score", "average building score per year"),  # Legend texts
+       col = c("black", "red"),           # Line colors
+       cex = 0.75,
+       pch = c(1, 19)) 
+
+# q4 e)
+
+influence_values <- function(pop, attribute){
+  N <- length(pop)
+  attribute_total_pop <- attribute(pop)
+  
+  return (sapply(1:N, function(x) { abs(attribute_total_pop - attribute(pop[-x])) }))
+}
+
+mean_influence <- influence_values(apartment_eval$SCORE, mean)
+
+plot(1:length(apartment_eval$SCORE), mean_influence, xlab = "Observation Number", ylab = "Influence")
