@@ -59,6 +59,29 @@ sum(sapply(x_val, function(x){ f(x) * dx_steps }))
 
 ## Question 2: Comparing Spread Attributes
 
+### 2a)
+
+```{=tex}
+\begin{align*}
+  SD(\mathcal{P}+b) &= \sqrt{\frac{\sum_{u \in \mathcal{P}} \left( (y_u + b) - (\overline{y} + b) \right)^2}{N}} \\
+                    &= \sqrt{\frac{\sum_{u \in \mathcal{P}} \left( (y_u - \overline{y} + b - b) \right)^2}{N}} \\ 
+                    &=  SD(\mathcal{P})
+\end{align*}
+```
+
+Hence, Standard Deviation is location invariant. 
+
+```{=tex}
+\begin{align*}
+  a(\mathcal{P} + b) = MAD(\mathcal{P} + b) &= \operatorname*{median}_{u \in \mathcal{P}} ~ \left| y_u + b - (\operatorname*{median}_{u \in \mathcal{P}} ~ y_u + b)\right|. \\
+                 &= \operatorname*{median}_{u \in \mathcal{P}} ~ \left| y_u - \operatorname*{median}_{u \in \mathcal{P}} ~ y_u + b - b\right| \\ 
+                 &=  MAD(\mathcal{P} + b)
+\end{align*}
+```
+
+Hence, Median Absolute Deviation is location invariant. 
+
+
 ```{r}
 # 2.d) 
 SD <- function(y) {
