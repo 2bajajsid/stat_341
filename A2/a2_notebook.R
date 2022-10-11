@@ -216,3 +216,63 @@ abline(temp, col = "blue")
 
 # huber's loss function gives a model with a greater positive intercept and a greater positive slope because 
 # it is less sensitive to outliers that are high in reb and low in points 
+
+#4a 
+
+rho <- function(theta){
+  theta_1 = theta[1]
+  theta_2 = theta[2]
+  
+  return (1/2 * (theta_1^4 - 16 * (theta_1)^2 + 5 * (theta_1) + theta_2^4 - 16 * (theta_2)^2 + 5* (theta_2)))
+}
+
+gradient <- function(theta){
+  theta_1 = theta[1]
+  theta_2 = theta[2]
+  
+  return (c(4 * (theta_1)^3 - 32 * (theta_1) + 5, 4 * (theta_2)^3 - 32 * (theta_2) + 5))
+}
+
+#4 b)
+
+result_1 <- gradientDescent(theta = c(0,0), rhoFn = rho, gradientFn = gradient,
+                          lineSearchFn = gridLineSearch, testConvergenceFn = testConvergence)
+
+result_2 <- gradientDescent(theta = c(3,3), rhoFn = rho, gradientFn = gradient,
+                              lineSearchFn = gridLineSearch, testConvergenceFn = testConvergence)
+
+result_3 <- gradientDescent(theta = c(-3,3), rhoFn = rho, gradientFn = gradient,
+                            lineSearchFn = gridLineSearch, testConvergenceFn = testConvergence)
+
+result_4 <- gradientDescent(theta = c(3,-3), rhoFn = rho, gradientFn = gradient,
+                            lineSearchFn = gridLineSearch, testConvergenceFn = testConvergence)
+
+result_5 <- gradientDescent(theta = c(-3,-3), rhoFn = rho, gradientFn = gradient,
+                            lineSearchFn = gridLineSearch, testConvergenceFn = testConvergence)
+
+#4 c)
+
+rho <- function(theta_1, theta_2){
+  return (1/2 * (theta_1^4 - 16 * (theta_1)^2 + 5 * (theta_1) + theta_2^4 - 16 * (theta_2)^2 + 5* (theta_2)))
+}
+
+theta1 <- seq(-5, 5, length = 500)
+theta2 <- seq(-5, 5, length = 500)
+Rho <- outer(theta1, theta2, "rho")
+image(theta1, theta2, Rho, col = heat.colors(1000), xlab = bquote(theta[1]),
+      ylab = bquote(theta[2]), main = "")
+contour(theta1, theta2, Rho, add = T, levels = c(100, 40, -40, 20, 80, -20, -60))
+
+#4 d) If starting value is close to a local minima that is not a global minima 
+#     it is probable that the gradient descent algorithm will converge and get stuck there 
+#     instead of reaching the global minima 
+
+#4 e)
+
+optim_1 <- optim(par = c(0,0), fn = rho)
+optim_2 <- optim(par=c(3,3), fn = rho)
+optim_3 <- optim(par=c(-3,3), fn = rho)
+optim_4 <- optim(par=c(3, -3), fn = rho)
+optim_5 <- optim(par=c(-3, -3), fn = rho)
+
+# all look similar apart from at (0,0) where the gradient descent algo gives a better approximation than the generalized optim one
