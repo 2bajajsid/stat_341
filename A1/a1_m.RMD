@@ -10,44 +10,50 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Question 1: Basic R Calculations
 
+### 1a)
+
 ```{r}
-3^4 # q1 a)
+3^4
 ```
+
+### 1b)
 
 ```{r}
 log(100, base = 7) # 1.b)
 ```
 
+### 1c)
+
 ```{r}
-# 1.c)
 x <- seq(1, 100) 
 sum(sapply(x, function(x) {1/(x^2)}))
 ```
 
-```{r}
-100 %% 7 # 1.d)
-```
+### 1d)
 
 ```{r}
-# 1.e) 
+100 %% 7
+```
+
+### 1e)
+
+```{r}
 dx_steps <- 0.001
 x_val <- seq(0, pi/2, by = dx_steps)
 sum(sapply(x_val, function(x){ sin(x) * dx_steps }))
 ```
 
-```{r}
-# 1.f) 
-f <- function(x) {
-  return (dexp(x, rate = 1/2))
-}
+### 1f)
 
+```{r}
 dx_steps <- 0.001
 x_val <- seq(0, 3, by = dx_steps)
 sum(sapply(x_val, function(x){ dexp(x, rate = 1/2) * dx_steps }))
 ```
 
+### 1g)
+
 ```{r}
-# 1.g) 
 f <- function(x) {
   return (x^2 + 3)
 }
@@ -57,14 +63,18 @@ x_val <- seq(-2, 2, by = dx_steps)
 sum(sapply(x_val, function(x){ f(x) * dx_steps }))
 ```
 
+\newpage
+
 ## Question 2: Comparing Spread Attributes
 
 ### 2a)
 
 ```{=tex}
 \begin{align*}
-  SD(\mathcal{P}+b) &= \sqrt{\frac{\sum_{u \in \mathcal{P}} \left( (y_u + b) - (\overline{y} + b) \right)^2}{N}} \\
-                    &= \sqrt{\frac{\sum_{u \in \mathcal{P}} \left( (y_u - \overline{y} + b - b) \right)^2}{N}} \\ 
+  SD(\mathcal{P}+b) &= \sqrt{\frac{\sum_{u \in \mathcal{P} + b} \left( y_u - (mean(\mathcal{P} + b) \right)^2}{N}} \\
+                    &= \sqrt{\frac{\sum_{u \in \mathcal{P}} \left( (y_u + b) - (\overline{y} + b) \right)^2}{N}} \\
+                    &= \sqrt{\frac{\sum_{u \in \mathcal{P}} \left( (y_u - \overline{y} + b - b) \right)^2}{N}} \\
+                    &= \sqrt{\frac{\sum_{u \in \mathcal{P}} \left( (y_u - \overline{y}) \right)^2}{N}} \\
                     &=  SD(\mathcal{P})
 \end{align*}
 ```
@@ -73,64 +83,124 @@ Hence, Standard Deviation is location invariant.
 
 ```{=tex}
 \begin{align*}
-  a(\mathcal{P} + b) = MAD(\mathcal{P} + b) &= \operatorname*{median}_{u \in \mathcal{P}} ~ \left| y_u + b - (\operatorname*{median}_{u \in \mathcal{P}} ~ y_u + b)\right|. \\
-                 &= \operatorname*{median}_{u \in \mathcal{P}} ~ \left| y_u - \operatorname*{median}_{u \in \mathcal{P}} ~ y_u + b - b\right| \\ 
-                 &=  MAD(\mathcal{P} + b)
+  a(\mathcal{P} + b) = MAD(\mathcal{P} + b) &= \operatorname*{median}_{u \in \mathcal{P} + b} ~ \left| y_u - (\operatorname*{median}_{u \in \mathcal{P} + b} ~ y_u)\right|. \\
+                 &= \operatorname*{median}_{u \in \mathcal{P}} ~ \left| y_u + b - (\operatorname*{median}_{u \in \mathcal{P}} ~ y_u + b)\right|. \\
+                 &= \operatorname*{median}_{u \in \mathcal{P}} ~ \left| (y_u - \operatorname*{median}_{u \in \mathcal{P}} ~ y_u) + b - b\right| \\ 
+                 &=  MAD(\mathcal{P})
 \end{align*}
 ```
 
 Hence, Median Absolute Deviation is location invariant. 
 
+### 2b)
+
+```{=tex}
+\begin{align*}
+  SD(\alpha \times \mathcal{P}) &= \sqrt{\frac{\sum_{u \in \alpha \times \mathcal{P}} \left( y_u - (mean(\alpha \times \mathcal{P}) \right)^2}{N}} \\
+                    &= \sqrt{\frac{\sum_{u \in \mathcal{P}} \left( (\alpha \times y_u) - (\alpha \times \overline{y}) \right)^2}{N}} \\
+                    &= \sqrt{\frac{\sum_{u \in \mathcal{P}} \left( \alpha \times (y_u - \overline{y}) \right)^2}{N}} \\
+                    &= \sqrt{\frac{\sum_{u \in \mathcal{P}} \alpha^2 \times \left( (y_u - \overline{y}) \right)^2}{N}} \\
+                    &=  \alpha \times SD(\mathcal{P})
+\end{align*}
+```
+
+Hence, Standard Deviation is scale equivariant.
+
+```{=tex}
+\begin{align*}
+  a(\alpha \times \mathcal{P}) = MAD(\alpha \times \mathcal{P}) &= \operatorname*{median}_{u \in \alpha \times \mathcal{P}} ~ \left| y_u - (\operatorname*{median}_{u \in \alpha \times \mathcal{P}} ~ y_u)\right|. \\
+                 &= \operatorname*{median}_{u \in \mathcal{P}} ~ \left| (\alpha \times y_u - \operatorname*{median}_{u \in \mathcal{P}} ~ \alpha \times y_u)\right| \\
+                 &= \operatorname*{median}_{u \in \mathcal{P}} ~ \left| (\alpha \times (y_u - \operatorname*{median}_{u \in \mathcal{P}} ~ y_u))\right| \\
+                 &=  \alpha \times MAD(\mathcal{P})
+\end{align*}
+```
+
+Hence, Median Absolute Deviation is scale equivariant.
+
+### 2c)
+
+```{=tex}
+\begin{align*}
+  SD(\mathcal{P}^k) &= \sqrt{\frac{\sum_{u \in \mathcal{P}^k} \left(y_u - (mean(\mathcal{P}^k) \right)^2}{N}} \\
+                    &= \sqrt{\frac{\sum_{u \in \mathcal{P}} \left(y_u - \overline{y} \right)^2}{N}} \\
+                    &=  SD(\mathcal{P})
+\end{align*}
+```
+
+Hence, Standard Deviation is replication invariant.
+
+```{=tex}
+\begin{align*}
+  MAD(\mathcal{P}^k) &= \operatorname*{median}_{u \in \mathcal{P}^k} ~ \left| y_u - (\operatorname*{median}_{u \in \mathcal{P}^k} ~ y_u)\right|. \\
+                 &= \operatorname*{median}_{u \in \mathcal{P}} ~ \left| (y_u - \operatorname*{median}_{u \in \mathcal{P}} ~ y_u)\right| \\
+                 &=  MAD(\mathcal{P})
+\end{align*}
+```
+
+Hence, Median Absolute Deviation is replication invariant.
+
+### 2d)
 
 ```{r}
-# 2.d) 
 SD <- function(y) {
-  return (sqrt(sum((y - mean(y))^2) / length(y)))
+  return (sqrt(sum((y - mean(y))^2 / length(y))))
 }
 
 MAD <- function(y) {
-  return (median(y - median(y)))
+  return (median(abs(y - median(y))))
 }
 ```
 
+### 2e)
+
 ```{r}
-# 2.e) 
+set.seed(341)
+sc <- function(pop, y, attr){
+  N <- length(pop) + 1
+  sapply (y, function(y.new){ N*(attr(c(y.new, pop)) - attr(pop)) })
+}
+
 set.seed(341)
 pop = rexp(1000)
 
 y_val <- seq(-1, 4, by=0.1)
 
-sc <- function(pop, y, attr){
-  N <- length(pop) + 1
-  return (sapply(y, function(y) { (N * (attr(c(pop, y)) - attr(pop))) })) 
-}
-
-delta_sd <- sc(pop, y_val, SD)
-delta_mad <- sc(pop, y_val, MAD)
-
-plot(y_val, delta_sd, type="l", lwd = 2, 
+plot(y_val, sc(pop, y_val, SD), type="l", lwd = 2, 
      main="SC for std deviation and absolute deviation", ylab="sensitivity", xlab="y", 
      xlim=c(-1,4), ylim=c(-1, 1), col="blue")
-lines(y_val, delta_mad, type="l", lwd = 2, main="Sensitivity curve for the median absolute deviation", col="red")
+lines(y_val, sc(pop, y_val, MAD), type="l", lwd = 2, main="Sensitivity curve for the median absolute deviation", col="red")
 
 legend(x = "bottomright",          # Position
        legend = c("std deviation", "median absolution deviation"),  # Legend texts
-       col = c("blue", "red"), # Line colors
-       cex = 0.8,
-       lwd = 2)   
+       col = c("blue", "red"),           # Line colors
+       lwd = 2)     
 ```
+
+### 2f)
+
+SD and MAD are both location invariant, scale equivariant, and replication invariant. 
+
+SD is however much more sensitive to extreme values since it's sensitivity curve increases without bounds as $y \rightarrow \infty$
+or $y \rightarrow - \infty$. 
+
+MAD is not very sensitive to extreme values and it's sensitivity will be bounded and hence, it is a much more robust measure because of its high breakdown point. On the other hand, SD is a fragile attribute and has a very low breakdown point.
+
+It is advantageous to use MAD over SD when we want to limit the effect of outliers on the statistic. It is advantageous to use SD over MAD to gain clarity over the range of variation within the dataset.
+
+\newpage
 
 ## Question 3: Write a rounded-barplot-making function
 
+### 3a)
+
 ```{r}
-# 3.a) 
 rounded.barplot <- function(x, xlab){
   table_x <- table(x)
   categories <- names(table_x)
   categories_frequencies <- as.numeric(table_x)
   
   plot.new()
-  plot(NULL, type="n", xlim=c(0, 10*length(categories_frequencies)), ylim=c(0, max(categories_frequencies)), axes=FALSE, ann=FALSE)
+  plot(NULL, type="n", xlim=c(0, 10*length(categories_frequencies)), ylim=c(0, max(categories_frequencies) + 10), axes=FALSE, ann=FALSE)
   
   axis(2, at=seq(from=0, to=max(categories_frequencies), by=10))
   mtext(xlab, side=1, line=2)
@@ -147,8 +217,9 @@ rounded.barplot <- function(x, xlab){
 }
 ```
 
+### 3b)
+
 ```{r}
-# 3.b) 
 set.seed(12345)
 flavours = c("Mango","Papaya","Banana","Coconut","Guava","Guarana","Durian","Cashew")
 candies = sample(flavours, size=300, prob=(1:8)/sum(1:8), replace=TRUE)
@@ -156,16 +227,21 @@ candies = sample(flavours, size=300, prob=(1:8)/sum(1:8), replace=TRUE)
 rounded.barplot(candies, xlab="Candy Flavour")
 ```
 
+\newpage
+
 ## Question 4: R Analysis Question
 
+### 4a)
+
 ```{r}
-# 4.a) 
 setwd("C:/Users/2baja/OneDrive/Desktop/STAT 341/A1")
 apartment_eval <- read.csv("Apartment_Building_Evaluation.csv")
 
 score_90 <- apartment_eval[,"SCORE"] >= 90
 sum(score_90)
 ```
+
+### 4b)
 
 ```{r}
 # 4.b) 
@@ -175,15 +251,20 @@ davenport_apartments_sorted_addresses <- davenport_apartments[order(-davenport_a
 davenport_apartments_sorted_addresses[c(1:5)]
 ```
 
+### 4c)
+
+Scarborough North has the highest score on average: $81.5$.
+River-Black Creek has the lowest score on average: $68.79$.
+
 ```{r}
-# 4.c) 
 unique_wardnames <- unique(apartment_eval[,"WARDNAME"])
 sapply(unique_wardnames, function(name) { mean(apartment_eval[which(apartment_eval$WARDNAME == name), "SCORE"]) })
 ```
 
+### 4d) 
+
 ```{r}
-# 4.d) 
-plot(apartment_eval$YEAR_BUILT, apartment_eval$SCORE, pch = 1, col=adjustcolor("black", alpha = 0.8), xlab="Year built", ylab="Apartment Score")
+plot(apartment_eval$YEAR_BUILT, apartment_eval$SCORE, pch = 16, col=adjustcolor("black", alpha = 0.25), xlab="Year built", ylab="Apartment Score", main="Appartment scores for buildings vs the year they were built")
 
 unique_years <- unique(apartment_eval[,"YEAR_BUILT"])
 average_score_by_year <- sapply(unique_years, function(year_built) { mean(apartment_eval[which(apartment_eval$YEAR_BUILT == year_built), "SCORE"]) })
@@ -194,29 +275,61 @@ legend(x = "bottomleft",          # Position
        legend = c("building score", "average building score per year"),  # Legend texts
        col = c("black", "red"),           # Line colors
        cex = 0.75,
-       pch = c(1, 19)) 
+       pch = c(16, 18)) 
 ```
 
+### 4e) 
+
 ```{r}
-# 4.e) 
-influence_values <- function(pop, attribute){
+influence <- function(pop, attribute){
   N <- length(pop)
   attribute_total_pop <- attribute(pop)
   
   return (sapply(1:N, function(x) { abs(attribute_total_pop - attribute(pop[-x])) }))
 }
 
-mean_influence <- influence_values(apartment_eval$SCORE, mean)
-
-plot(1:length(apartment_eval$SCORE), mean_influence, xlab = "Observation Number", ylab = "Influence")
+plot(1:length(apartment_eval$SCORE), influence(apartment_eval$SCORE, mean), pch = 16, col=adjustcolor("black", alpha = 0.25), xlab = "Observation Number", ylab = "Influence", main = "Influence of apartment on mean apartment score")
 ```
 
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+The building with the largest influence has the following observation number: 
+```{r}
+which.max(influence(apartment_eval$SCORE, mean))
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+### 4.f) 
+
+```{r}
+apartment_eval_without_outlier <- apartment_eval[-which.max(influence(apartment_eval$SCORE, mean)),]
+
+powerfun <- function(y, alpha) {
+  if(sum(y <= 0) > 0) stop("y must be positive")
+  if (alpha == 0)
+    log(y)
+  else if (alpha > 0) {
+    y^alpha
+  } else -(y^alpha)
+}
+
+par(mfrow=c(1,2))
+hist(powerfun(apartment_eval_without_outlier$SCORE, 1), main=bquote(alpha == .(1)), xlab="Untransformed Score", ylab = "Frequency")
+hist(powerfun(apartment_eval_without_outlier$SCORE, 1.18), main=bquote(alpha == .(1.18)), xlab="Transformed Score", ylab = "Frequency")
+```
+
+The $\alpha$ that makes the SCORE distribution more symmetric is chosen as $1.18$ since the transformed histogram has a skewness that is very close to 0.
+
+```{r}
+library("moments")
+skewness(powerfun(apartment_eval_without_outlier$SCORE, 1.18))
+```
+
+### 4.g) 
+
+```{r}
+par(mfrow=c(1,2))
+plot(apartment_eval_without_outlier$CONFIRMED_STOREYS, apartment_eval_without_outlier$CONFIRMED_UNITS, main = "Untransformed Units vs Storeys", xlab="Confirmed Storeys", ylab="Confirmed Units")
+plot(powerfun(apartment_eval_without_outlier$CONFIRMED_STOREYS + 1, -0.25), powerfun(apartment_eval_without_outlier$CONFIRMED_UNITS + 1, 0.25),main = "Transformed Units vs Storeys", xlab="Confirmed Storeys - alpha: -0.25", ylab="Confirmed Units - alpha: 0.25")
+```
+
+$\alpha_x$ is chosen as $-0.25$ and $\alpha_y$ is chosen as $0.25$.
+
+The corresponding linear regression model shows that transformed plot has an $r^2 = 0.8003$ which depicts a closer linear relationship than the untransformed plot which has an $r^2 = 0.7469$.

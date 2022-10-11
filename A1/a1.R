@@ -39,16 +39,16 @@ sum(sapply(x_val, function(x){ f(x) * dx_steps }))
 # Question 2
 
 SD <- function(y) {
-  return (sqrt(sum((y - mean(y))^2) / length(y)))
+  return (sqrt(sum((y - mean(y))^2 / length(y))))
 }
 
 MAD <- function(y) {
-  return (median(y - median(y)))
+  return (median(abs(y - median(y))))
 }
 
 sc <- function(pop, y, attr){
   N <- length(pop) + 1
-  return (N * (attr(c(pop, y)) - attr(pop)))
+  sapply (y, function(y.new){ N*(attr(c(y.new, pop)) - attr(pop)) })
 }
 
 set.seed(341)
@@ -56,13 +56,10 @@ pop = rexp(1000)
 
 y_val <- seq(-1, 4, by=0.1)
 
-delta_sd <- sapply(y_val, function(y) { sc(pop, y, SD) })
-delta_mad <- sapply(y_val, function(y) { sc(pop, y, MAD) })
-
-plot(y_val, delta_sd, type="l", lwd = 2, 
+plot(y_val, sc(pop, y_val, SD), type="l", lwd = 2, 
      main="SC for std deviation and absolute deviation", ylab="sensitivity", xlab="y", 
      xlim=c(-1,4), ylim=c(-1, 1), col="blue")
-lines(y_val, delta_mad, type="l", lwd = 2, main="Sensitivity curve for the median absolute deviation", col="red")
+lines(y_val, sc(pop, y_val, MAD), type="l", lwd = 2, main="Sensitivity curve for the median absolute deviation", col="red")
 
 legend(x = "topright",          # Position
        legend = c("std deviation", "median absolution deviation"),  # Legend texts
@@ -128,7 +125,7 @@ sapply(unique_wardnames, function(name) { mean(apartment_eval[which(apartment_ev
 
 # q4 d)
 
-plot(apartment_eval$YEAR_BUILT, apartment_eval$SCORE, pch = 1, col=adjustcolor("black", alpha = 0.8), xlab="Year built", ylab="Apartment Score")
+plot(apartment_eval$YEAR_BUILT, apartment_eval$SCORE, pch = 1, col=adjustcolor("black", alpha = 0.8), xlab="Year built", ylab="Apartment Score", main="Appartment scores for buildings based on their year built")
 
 unique_years <- unique(apartment_eval[,"YEAR_BUILT"])
 average_score_by_year <- sapply(unique_years, function(year_built) { mean(apartment_eval[which(apartment_eval$YEAR_BUILT == year_built), "SCORE"]) })
@@ -152,4 +149,50 @@ influence_values <- function(pop, attribute){
 
 mean_influence <- influence_values(apartment_eval$SCORE, mean)
 
-plot(1:length(apartment_eval$SCORE), mean_influence, xlab = "Observation Number", ylab = "Influence")
+plot(1:length(apartment_eval$SCORE), mean_influence, xlab = "Observation Number", ylab = "Influence", main = "Influence of each building on the average SCORE attribute")
+
+# largest influence 
+
+ind <- which.max(mean_influence)
+apartment_eval_without_outlier <- apartment_eval[-ind,]
+
+#q4 f)
+
+powerfun <- function(y, alpha) {
+  if(sum(y <= 0) > 0) stop("y must be positive")
+  if (alpha == 0)
+    log(y)
+  else if (alpha > 0) {
+    y^alpha
+  } else -(y^alpha)
+}
+
+par(mfrow=c(1,2))
+hist(powerfun(apartment_eval_without_outlier$SCORE, 1), main=bquote(alpha == .(1)), xlab="Untransformed Score")
+hist(powerfun(apartment_eval_without_outlier$SCORE, 1.18), main=bquote(alpha == .(1.18)), xlab="Transformed Score")
+
+hist(apartment_eval_without_outlier$SCORE)
+hist(powerfun(apartment_eval_without_outlier$SCORE, 0))
+hist(powerfun(apartment_eval_without_outlier$SCORE, 2))
+
+par(mfrow=c(3,3))
+a = seq(-5, 5, length.out=9)
+for (i in 1:9) {
+  hist(powerfun(apartment_eval_without_outlier$SCORE, a[i]), main=bquote(alpha == .(a[i])), xlab="", breaks=50)
+}
+
+#q4 g)
+
+par(mfrow=c(1,2))
+hist(apartment_eval_without_outlier$CONFIRMED_STOREYS + 1)
+hist(powerfun(apartment_eval_without_outlier$CONFIRMED_STOREYS + 1, -1.5))
+
+par(mfrow=c(1,2))
+hist(apartment_eval_without_outlier$CONFIRMED_UNITS + 1)
+hist(powerfun(apartment_eval_without_outlier$CONFIRMED_UNITS + 1, -0.01))
+
+par(mfrow=c(1,2))
+plot(apartment_eval_without_outlier$CONFIRMED_STOREYS, apartment_eval_without_outlier$CONFIRMED_UNITS)
+plot(powerfun(apartment_eval_without_outlier$CONFIRMED_STOREYS + 1, -0.25), powerfun(apartment_eval_without_outlier$CONFIRMED_UNITS + 1, 0.25))
+
+summary(lm(powerfun(apartment_eval_without_outlier$CONFIRMED_STOREYS + 1, -0.25) ~ powerfun(apartment_eval_without_outlier$CONFIRMED_UNITS + 1, 0.25)))
